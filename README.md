@@ -1,0 +1,82 @@
+# WordPress Core Web Vitals Lab
+
+Core Web Vitals is a reality. These new metrics created to measure the user page experience [will be part of the Google ranking algorithm in May 2021](https://developers.google.com/search/blog/2020/11/timing-for-page-experience). The objective of this project is to be a laboratory of testing how the [WordPress](http://wordpress.org/) ecosystem bahaves with these metrics.
+
+The objective of this project is to discuss how to improve the Lighthouse metrics on the WordPress ecosystem.
+
+This configuration comes with [Varnish](https://varnish-cache.org/) to cache requests and reduce the server response time. For tests purpose, it is possible use or bypass it. See _How to serve_ section to check how do that.
+
+[Docker Compose](https://docs.docker.com/compose/) is the base to the configuration to serve the WordPress application. So, to run the project it is necessary to have [Docker](https://www.docker.com/) installed.
+
+## How to install
+
+```bash
+$ docker-compose build --pull && docker-compose pull
+$ docker-compose up -d db
+$ docker-compose run --rm wordpress wp-install
+```
+
+## How to serve
+
+```bash
+$ docker-compose up -d server
+```
+
+The WordPress application will be served on 4 ports:
+
+- __[443](https://localhost)__: Varnish over SSL and HTTP/2
+- __[80](https://localhost)__: Varnish over HTTP/1.1
+- __[44380](https://localhost)__: Without Varnish over SSL and HTTP/2
+- __[44380](https://localhost)__: Without Varnish over HTTP/1.1
+
+## Services
+
+### WordPress
+
+A PHP image with the WordPress modules dependencies.
+
+The image is built with [WP-CLI](https://wp-cli.org/) to help manage the application. See _How to run WP-CLI commands_ section to get more information how to use it.
+
+It was added Xdebug extension to help debug the application. See _How to debug_ section to see how to enable and config the integration with the IDE.
+
+### Nginx
+
+Used to proxy the requests to Varnish and PHP-FPM.
+
+### Varnish
+
+The cache system to delivery the requests faster than process them every time.
+
+### MariaDB
+
+The database service to store application data.
+
+## How To
+
+### How to run WP-CLI commands?
+
+```bash
+$ docker-compose run --rm wp [command]
+```
+
+### How to debug?
+
+It is necessary change the value of `XDEBUG_MODE` from `off` to `debug` on `docker-compose.yml` file and restart the WordPress service if it is already running.
+
+```bash
+$ docker-compose restart wordpress
+```
+
+For VS Code integration, the [PHP Debug](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug) should be installed and active. The `launch.json` must have this configuration:
+
+```json
+{
+    "name": "Listen for XDebug",
+    "type": "php",
+    "request": "launch",
+    "port": 9003,
+    "pathMappings": {
+        "/var/www/html": "${workspaceRoot}/public",
+    }
+}
+```

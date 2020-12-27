@@ -1,0 +1,70 @@
+version: "2.0"
+
+services:
+    wordpress:
+        build:
+            context: ./docker/wp
+        volumes:
+            - ./public:/var/www/html
+        depends_on:
+            - db
+        environment:
+            XDEBUG_MODE: "debug"
+
+    wp:
+        build:
+            context: ./docker/wp
+        volumes:
+            - ./public:/var/www/html
+        depends_on:
+            - db
+        entrypoint: ["/usr/local/bin/wp"]
+        user: www-data
+        environment:
+            XDEBUG_MODE: "off"
+
+    server:
+        build:
+            context: ./docker/nginx
+        links:
+            - varnish
+        ports:
+            - 80:80
+            - 443:443
+        volumes:
+            - ./public:/var/www/html:ro
+            - ./docker/nginx/etc/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./docker/nginx/etc/ssl:/etc/nginx/ssl:ro
+            - ./docker/nginx/etc/conf.d/proxy.conf:/etc/nginx/conf.d/proxy.conf:ro
+
+    upstream:
+        build:
+            context: ./docker/nginx
+        links:
+            - wordpress
+        ports:
+            - 8080:8080
+            - 44380:44380
+        volumes:
+            - ./public:/var/www/html:ro
+            - ./docker/nginx/etc/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./docker/nginx/etc/ssl:/etc/nginx/ssl:ro
+            - ./docker/nginx/etc/conf.d/upstream.conf:/etc/nginx/conf.d/upstream.conf:ro
+
+    db:
+        image: mariadb
+        volumes:
+            - db_data:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: db
+            MYSQL_ROOT_PASSWORD: db
+
+    varnish:
+        image: varnish
+        links:
+            - upstream
+        volumes:
+            - ./docker/varnish/etc/default.vcl:/etc/varnish/default.vcl:ro
+
+volumes:
+    db_data:
