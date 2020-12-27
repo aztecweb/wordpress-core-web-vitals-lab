@@ -9,7 +9,7 @@ services:
         depends_on:
             - db
         environment:
-            XDEBUG_MODE: "debug"
+            XDEBUG_MODE: "off"
 
     wp:
         build:
