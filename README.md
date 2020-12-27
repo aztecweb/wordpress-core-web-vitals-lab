@@ -25,9 +25,9 @@ $ docker-compose up -d server
 The WordPress application will be served on 4 ports:
 
 - __[443](https://localhost)__: Varnish over SSL and HTTP/2
-- __[80](https://localhost)__: Varnish over HTTP/1.1
-- __[44380](https://localhost)__: Without Varnish over SSL and HTTP/2
-- __[44380](https://localhost)__: Without Varnish over HTTP/1.1
+- __[80](http://localhost)__: Varnish over HTTP/1.1
+- __[44380](https://localhost:44380)__: Without Varnish over SSL and HTTP/2
+- __[8080](http://localhost:8080)__: Without Varnish over HTTP/1.1
 
 ## Services
 
