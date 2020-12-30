@@ -4,7 +4,9 @@ services:
     wordpress:
         build:
             context: ./docker/wp
+            target: base
         volumes:
+            - ./cwv-perf-optimize:/cwv-perf-optimize
             - ./public:/var/www/html
         depends_on:
             - db
@@ -14,7 +16,9 @@ services:
     wp:
         build:
             context: ./docker/wp
+            target: base
         volumes:
+            - ./cwv-perf-optimize:/cwv-perf-optimize
             - ./public:/var/www/html
         depends_on:
             - db
@@ -65,6 +69,28 @@ services:
             - upstream
         volumes:
             - ./docker/varnish/etc/default.vcl:/etc/varnish/default.vcl:ro
+
+    plugin-tests:
+        build:
+            context: ./docker/wp
+            target: tests
+        volumes:
+            - ./cwv-perf-optimize:/cwv-perf-optimize
+        working_dir: /cwv-perf-optimize
+        command: ["/usr/local/bin/phpunit"]
+        depends_on:
+            - db
+        environment:
+            XDEBUG_MODE: "off"
+
+    plugin-cs:
+        build:
+            context: ./docker/wp
+            target: coding-standards
+        volumes:
+            - ./cwv-perf-optimize:/cwv-perf-optimize
+        working_dir: /cwv-perf-optimize
+        command: ["/usr/local/bin/phpcs", "-s"]
 
 volumes:
     db_data:

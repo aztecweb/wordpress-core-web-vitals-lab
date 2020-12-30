@@ -32,3 +32,7 @@ PHP
 # Create the installation data on database if it doesn't exist yet
 echo 'Installing WordPress'
 wp --allow-root core install --url=https://localhost --title="Core Web Vitals Lab" --admin_user=admin --admin_password=admin --admin_email=admin@admin.com
+
+# Create link symbolic to cwv-perf-optimize plugin and activate it
+ln -sf /cwv-perf-optimize /var/www/html/wp-content/plugins/cwv-perf-optimize
+wp --allow-root plugin activate cwv-perf-optimize

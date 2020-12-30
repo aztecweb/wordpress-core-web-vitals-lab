@@ -29,6 +29,12 @@ The WordPress application will be served on 4 ports:
 - __[44380](https://localhost:44380)__: Without Varnish over SSL and HTTP/2
 - __[8080](http://localhost:8080)__: Without Varnish over HTTP/1.1
 
+## Plugin
+
+We have a plugin called _Core Web Vitals Performance Optimize_ inner the project. This plugin has proof of concept to add page performance improvements to WordPress Core and the entire ecosystem.
+
+This plugin is symlinked to the directory plugin and it is automatically activated by installation script.
+
 ## Services
 
 ### WordPress
@@ -50,6 +56,14 @@ The cache system to delivery the requests faster than process them every time.
 ### MariaDB
 
 The database service to store application data.
+
+### Plugin test
+
+Service to run _Core Web Vitals Performance Optimize_ unit test. See _How to run plugin unit tests_ section to see how run the tests.
+
+### Plugin coding standards
+
+Service to check if the code standard of the plugin. See _How to check plugin coding standards_ section to see how run the checker.
 
 ## How To
 
@@ -76,7 +90,40 @@ For VS Code integration, the [PHP Debug](https://marketplace.visualstudio.com/it
     "request": "launch",
     "port": 9003,
     "pathMappings": {
+        "/cwv-perf-optimize": "${workspaceRoot}/cwv-perf-optimize",
         "/var/www/html": "${workspaceRoot}/public",
     }
 }
+```
+
+### How to run plugin unit tests?
+
+Before to run the tests, the test data should be installed.
+
+```bash
+$ docker-compose run --rm plugin-tests bin/install-wp-tests.sh wordpress_test root db db latest
+```
+
+So, run the tests.
+
+```bash
+$ docker-compose run --rm plugin-tests
+```
+
+The unit tests images come with [phpunit-watcher](https://github.com/spatie/phpunit-watcher) shipped to keep PHPUnit running and waiting changes to run the tests again.
+
+```bash
+$ docker-compose run --rm plugin-tests phpunit-watcher watch
+```
+
+### How to check plugin coding standards?
+
+```bash
+$ docker-compose run --rm plugin-cs
+```
+
+To fix code alowed to be fixed using [PHP Code Beautifier and Fixer](https://github.com/squizlabs/PHP_CodeSniffer/wiki/Fixing-Errors-Automatically).
+
+```bash
+$ docker-compose run --rm plugin-cs phpcbf
 ```
