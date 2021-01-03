@@ -40,9 +40,6 @@ COPY wp-install.sh /usr/local/bin/wp-install
 
 FROM base as tests
 
-ENV TMPDIR /cwv-perf-optimize/.tmp
-ENV WP_TESTS_DIR ${TMPDIR}/wordpress-tests-lib
-
 # subversion is required by Wordpress Unit test installer
 RUN apk add --update --no-cache subversion
 
@@ -57,10 +54,12 @@ RUN set -ex; \
     # Install PHPUnit globally
     composer --global config bin-dir /usr/local/bin; \
     composer global require \
-        # PHPUnit 7 is a requirement to WordPress Unit tests
-        phpunit/phpunit:7.x \
+        # A mocking library to take the pain out of unit testing for WordPress
+        10up/wp_mock \
+        # PHPUnit
+        phpunit/phpunit \
         # PHPUnit watcher keep the tests running
-        spatie/phpunit-watcher:^1.10
+        spatie/phpunit-watcher
 
 FROM base as coding-standards
 

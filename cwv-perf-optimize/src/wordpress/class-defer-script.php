@@ -25,8 +25,8 @@ class Defer_Script {
 	/**
 	 * Load hooks
 	 */
-	public function __construct() {
-		add_filter( 'script_loader_tag', array( $this, 'defer_script' ) );
+	public function hooks() {
+		add_filter( 'script_loader_tag', array( $this, 'add_defer_attribute' ) );
 	}
 
 	/**
@@ -35,7 +35,7 @@ class Defer_Script {
 	 * @param string $tag The current script tag.
 	 * @return string The script tag with defer attribute.
 	 */
-	public function defer_script( $tag ) {
+	public function add_defer_attribute( $tag ) {
 		$tag = str_replace( '></script>', ' defer></script>', $tag );
 
 		return $tag;

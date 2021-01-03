@@ -13,6 +13,12 @@ require_once __DIR__ . '/autoload.php';
  * Bootstrap performance tricks
  */
 function plugin_bootstrap() {
-	new \Cwv_Perf_Optimize\WordPress\Defer_Script();
+	$has_hooks = array(
+		new \Cwv_Perf_Optimize\WordPress\Defer_Script(),
+	);
+
+	foreach ( $has_hooks as $class ) {
+		$class->hooks();
+	}
 }
 add_action( 'init', __NAMESPACE__ . '\plugin_bootstrap' );

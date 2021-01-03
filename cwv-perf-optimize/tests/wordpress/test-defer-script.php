@@ -7,38 +7,45 @@
 
 namespace Cwv_Perf_Optimize\Tests\WordPress;
 
+use Cwv_Perf_Optimize\Tests\Test_Case;
+use Cwv_Perf_Optimize\WordPress\Defer_Script;
 use DOMDocument;
-use WP_UnitTestCase;
 
 /**
  * Test Defer_Script class
  */
-class Test_Defer_Script extends WP_UnitTestCase {
+class Test_Defer_Script extends Test_Case {
 
 	/**
-	 * Test script_loader_tag filter
+	 * Test if hooks are being loaded correctly
+	 *
+	 * @doesNotPerformAssertions
 	 */
-	public function test_defer_attribute() {
-		$handle  = 'some-script';
-		$src     = 'http://some-domain.com';
-		$version = '0.0';
+	public function test_hooks() {
+		$defer_script = new Defer_Script();
 
-		wp_register_script( $handle, $src, array(), $version, false );
-		wp_enqueue_script( $handle );
+		\WP_Mock::expectFilterAdded( 'script_loader_tag', array( $defer_script, 'add_defer_attribute' ) );
 
-		$scripts = wp_scripts();
+		$defer_script->hooks();
+	}
 
-		ob_start();
-		$scripts->do_item( $handle );
-		$tag = ob_get_clean();
+	/**
+	 * Test if the defer attribute is being added
+	 */
+	public function test_add_defer_attribute() {
+		$src = 'https://localhost/wp-includes/js/wp-embed.min.js?ver=5.6';
+		$id  = 'wp-embed-js';
+		$tag = "<script src='${src}' id='${id}'></script>"; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+
+		$defer_script = new Defer_Script();
+		$deferred_tag = $defer_script->add_defer_attribute( $tag );
 
 		$document = new DOMDocument();
-		$document->loadHTML( $tag );
+		$document->loadHTML( $deferred_tag );
 		$script_element = $document->getElementsByTagName( 'script' )[0];
 
-		$this->assertEquals( 'text/javascript', $script_element->getAttribute( 'type' ) );
 		$this->assertStringStartsWith( $src, $script_element->getAttribute( 'src' ) );
-		$this->assertEquals( $handle . '-js', $script_element->getAttribute( 'id' ) );
+		$this->assertEquals( 'wp-embed-js', $script_element->getAttribute( 'id' ) );
 		$this->assertTrue( $script_element->hasAttribute( 'defer' ) );
 	}
 }
