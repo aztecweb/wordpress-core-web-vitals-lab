@@ -98,14 +98,6 @@ For VS Code integration, the [PHP Debug](https://marketplace.visualstudio.com/it
 
 ### How to run plugin unit tests?
 
-Before to run the tests, the test data should be installed.
-
-```bash
-$ docker-compose run --rm plugin-tests bin/install-wp-tests.sh wordpress_test root db db latest
-```
-
-So, run the tests.
-
 ```bash
 $ docker-compose run --rm plugin-tests
 ```
