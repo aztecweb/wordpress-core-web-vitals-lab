@@ -20,6 +20,7 @@ COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
 
 # Add WP-CLI MySQL client dependency to image
 COPY --from=wordpress:cli /usr/bin/mysql /usr/local/bin/mysql
+COPY --from=wordpress:cli /usr/bin/mysqldump /usr/local/bin/mysqldump
 
 # Install, enable and configure Xdebug
 RUN { \
@@ -31,6 +32,9 @@ RUN { \
 
 # Change PAGER environment variable to WP-CLI work with busybox less
 ENV PAGER more
+
+# Change WP-CLI cache directory to avoid versioning
+ENV WP_CLI_CACHE_DIR /tmp/wp-cli-cache
 
 # Rewrite default image entrypoint to don't copy wordpress to /var/www/html
 COPY docker-entrypoint.sh /usr/local/bin/
@@ -60,6 +64,29 @@ RUN set -ex; \
         phpunit/phpunit \
         # PHPUnit watcher keep the tests running
         spatie/phpunit-watcher
+
+FROM base as cli-tests
+
+# PHP extension required by Codeception
+RUN docker-php-ext-install \
+    pdo_mysql
+
+# Add composer binarty to install PHPUnit
+COPY --from=composer /usr/bin/composer /usr/local/bin/composer
+
+RUN set -ex; \
+    \
+    composer --global config bin-dir /usr/local/bin; \
+    # WordPress functional and acceptance tests library
+    composer global require \
+        lucatume/wp-browser \
+        codeception/module-asserts \
+        codeception/module-phpbrowser \
+        codeception/module-webdriver \
+        codeception/module-db \
+        codeception/module-filesystem \
+        codeception/module-cli \
+        codeception/util-universalframework
 
 FROM base as coding-standards
 

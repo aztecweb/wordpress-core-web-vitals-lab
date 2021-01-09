@@ -13,6 +13,10 @@ require_once __DIR__ . '/autoload.php';
  * Bootstrap performance tricks
  */
 function plugin_bootstrap() {
+	if ( is_admin() ) {
+		return;
+	}
+
 	$has_hooks = array(
 		new \Cwv_Perf_Optimize\WordPress\Defer_Script(),
 	);

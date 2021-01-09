@@ -18,11 +18,38 @@ services:
             context: ./docker/wp
             target: base
         volumes:
+            - ./.wp-cli:/home/www-data/.wp-cli
             - ./cwv-perf-optimize:/cwv-perf-optimize
             - ./public:/var/www/html
         depends_on:
             - db
         entrypoint: ["/usr/local/bin/wp"]
+        user: www-data
+        environment:
+            XDEBUG_MODE: "off"
+
+    cli-tests:
+        build:
+            context: ./docker/wp
+            target: base
+        volumes:
+            - ./.wp-cli:/root/.wp-cli
+        working_dir: /root/.wp-cli
+        links:
+            - cli-tests-server
+        environment:
+            XDEBUG_MODE: "off"
+
+    cli-tests-server:
+        build:
+            context: ./docker/wp
+            target: cli-tests
+        volumes:
+            - ./.wp-cli:/home/www-data/.wp-cli
+        working_dir: /home/www-data/.wp-cli
+        command: ["/home/www-data/.wp-cli/tests/server.sh"]
+        depends_on:
+            - db
         user: www-data
         environment:
             XDEBUG_MODE: "off"
@@ -83,13 +110,22 @@ services:
         environment:
             XDEBUG_MODE: "off"
 
+    cs:
+        build:
+            context: ./docker/wp
+            target: coding-standards
+        volumes:
+            - ./:/app
+        working_dir: /app
+        command: ["/usr/local/bin/phpcs", "-s"]
+
     plugin-cs:
         build:
             context: ./docker/wp
             target: coding-standards
         volumes:
-            - ./cwv-perf-optimize:/cwv-perf-optimize
-        working_dir: /cwv-perf-optimize
+            - ./:/app
+        working_dir: /app
         command: ["/usr/local/bin/phpcs", "-s"]
 
 volumes:

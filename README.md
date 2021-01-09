@@ -108,14 +108,21 @@ The unit tests images come with [phpunit-watcher](https://github.com/spatie/phpu
 $ docker-compose run --rm plugin-tests phpunit-watcher watch
 ```
 
-### How to check plugin coding standards?
+### How to test cli commands?
 
 ```bash
-$ docker-compose run --rm plugin-cs
+$ docker-compose run --rm cli-tests codecept run functional
+```
+
+
+### How to check coding standards?
+
+```bash
+$ docker-compose run --rm cs
 ```
 
 To fix code alowed to be fixed using [PHP Code Beautifier and Fixer](https://github.com/squizlabs/PHP_CodeSniffer/wiki/Fixing-Errors-Automatically).
 
 ```bash
-$ docker-compose run --rm plugin-cs phpcbf
+$ docker-compose run --rm cs phpcbf
 ```
