@@ -1,0 +1,23 @@
+{
+    "name": "aztecweb/wordpress-core-web-vitals-lab",
+    "description": "Core Web Vitals WordPress laboratory",
+    "type": "project",
+    "require": {
+        "wp-cli/wp-cli-bundle": "^2.4"
+    },
+    "require-dev": {
+        "10up/wp_mock": "^0.4.2",
+        "phpunit/phpunit": "^9.5",
+        "spatie/phpunit-watcher": "^1.23",
+        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+        "wp-coding-standards/wpcs": "^2.3",
+        "phpcompatibility/phpcompatibility-wp": "^2.1"
+    },
+    "license": "GPLv2",
+    "authors": [
+        {
+            "name": "Eduardo Pittol",
+            "email": "edpittol@gmail.com"
+        }
+    ]
+}

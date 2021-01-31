@@ -15,9 +15,6 @@ RUN set -ex; \
     # Remove build dependencies
     apk del .build-deps
 
-# Add WP-CLI binary to image
-COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
-
 # Add WP-CLI MySQL client dependency to image
 COPY --from=wordpress:cli /usr/bin/mysql /usr/local/bin/mysql
 
@@ -28,6 +25,10 @@ RUN { \
 	echo 'xdebug.client_host = host.docker.internal'; \
 	echo 'xdebug.log = /tmp/xdebug.log'; \
 } > /usr/local/etc/php/conf.d/xdebug.ini
+
+
+# Change PAGER environment variable to WP-CLI work with busybox less
+ENV PATH ${PATH}:/vendor/bin
 
 # Change PAGER environment variable to WP-CLI work with busybox less
 ENV PAGER more
@@ -45,35 +46,3 @@ RUN apk add --update --no-cache subversion
 
 # mysqladmin is required by Wordpress Unit test installer
 COPY --from=wordpress:cli /usr/bin/mysqladmin /usr/local/bin/mysqladmin
-
-# Add composer binarty to install PHPUnit
-COPY --from=composer /usr/bin/composer /usr/local/bin/composer
-
-RUN set -ex; \
-    \
-    # Install PHPUnit globally
-    composer --global config bin-dir /usr/local/bin; \
-    composer global require \
-        # A mocking library to take the pain out of unit testing for WordPress
-        10up/wp_mock \
-        # PHPUnit
-        phpunit/phpunit \
-        # PHPUnit watcher keep the tests running
-        spatie/phpunit-watcher
-
-FROM base as coding-standards
-
-# Add composer binarty to install PHP Coding Standards
-# Composer 1.x is required by phpcodesniffer-composer-installer
-COPY --from=composer:1 /usr/bin/composer /usr/local/bin/composer
-
-RUN set -ex; \
-    \
-    # Install WordPress Coding Standards globally
-    composer --global config bin-dir /usr/local/bin; \
-    composer global require \
-        # Required to autoload installed coding standards
-        dealerdirect/phpcodesniffer-composer-installer:^0.6 \
-        # .phpcs.xml.dist required coding standards
-        wp-coding-standards/wpcs \
-        phpcompatibility/phpcompatibility-wp

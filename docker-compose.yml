@@ -20,9 +20,10 @@ services:
         volumes:
             - ./cwv-perf-optimize:/cwv-perf-optimize
             - ./public:/var/www/html
+            - ./vendor:/vendor
         depends_on:
             - db
-        entrypoint: ["/usr/local/bin/wp"]
+        entrypoint: ["/vendor/bin/wp"]
         user: www-data
         environment:
             XDEBUG_MODE: "off"
@@ -76,8 +77,9 @@ services:
             target: tests
         volumes:
             - ./cwv-perf-optimize:/cwv-perf-optimize
+            - ./vendor:/vendor
         working_dir: /cwv-perf-optimize
-        command: ["/usr/local/bin/phpunit"]
+        command: ["/vendor/bin/phpunit"]
         depends_on:
             - db
         environment:
@@ -86,11 +88,20 @@ services:
     plugin-cs:
         build:
             context: ./docker/wp
-            target: coding-standards
+            target: base
         volumes:
             - ./cwv-perf-optimize:/cwv-perf-optimize
+            - ./vendor:/vendor
         working_dir: /cwv-perf-optimize
-        command: ["/usr/local/bin/phpcs", "-s"]
+        command: ["/vendor/bin/phpcs", "-s"]
+
+    composer:
+        image: composer
+        volumes:
+            - .:/app
+            # Map local user Composer directory with container for cache packages
+            - ~/.docker_cache/composer:/tmp/cache
+        working_dir: /app
 
 volumes:
     db_data:
