@@ -8,6 +8,7 @@ services:
         volumes:
             - ./cwv-perf-optimize:/cwv-perf-optimize
             - ./public:/var/www/html
+            - ./vendor:/vendor
         depends_on:
             - db
         environment:
