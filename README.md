@@ -12,6 +12,7 @@ This configuration comes with [Varnish](https://varnish-cache.org/) to cache req
 
 ```bash
 $ docker-compose build --pull && docker-compose pull
+$ docker-compose run --rm composer install --ignore-platform-req php
 $ docker-compose up -d db
 $ docker-compose run --rm wordpress wp-install
 ```
