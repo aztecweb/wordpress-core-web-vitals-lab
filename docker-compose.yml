@@ -11,6 +11,8 @@ services:
             - ./vendor:/vendor
         depends_on:
             - db
+        extra_hosts:
+            host.docker.internal: 172.17.0.1
         environment:
             XDEBUG_MODE: "off"
 
@@ -24,6 +26,8 @@ services:
             - ./vendor:/vendor
         depends_on:
             - db
+        extra_hosts:
+            host.docker.internal: 172.17.0.1
         entrypoint: ["/vendor/bin/wp"]
         user: www-data
         environment:
