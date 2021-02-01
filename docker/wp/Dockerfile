@@ -7,10 +7,12 @@ RUN set -ex; \
         autoconf \
         build-base \
         gcc \
+        libzip-dev \
     ; \
-    # Install Xdebug extension
+    # Install PHP extensions dependency
     pecl install xdebug; \
     docker-php-ext-enable xdebug; \
+    docker-php-ext-install zip; \
     \
     # Remove build dependencies
     apk del .build-deps
