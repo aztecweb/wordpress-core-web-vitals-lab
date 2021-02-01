@@ -43,8 +43,7 @@ COPY wp-install.sh /usr/local/bin/wp-install
 
 FROM base as tests
 
-# subversion is required by Wordpress Unit test installer
-RUN apk add --update --no-cache subversion
-
-# mysqladmin is required by Wordpress Unit test installer
-COPY --from=wordpress:cli /usr/bin/mysqladmin /usr/local/bin/mysqladmin
+RUN set -ex; \
+    \
+    # Install tests PHP dependency
+    docker-php-ext-install pdo_mysql

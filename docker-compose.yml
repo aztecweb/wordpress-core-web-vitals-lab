@@ -76,19 +76,27 @@ services:
         volumes:
             - ./docker/varnish/etc/default.vcl:/etc/varnish/default.vcl:ro
 
-    plugin-tests:
+    codecept:
         build:
             context: ./docker/wp
             target: tests
         volumes:
+            - .:/app
             - ./cwv-perf-optimize:/cwv-perf-optimize
-            - ./vendor:/vendor
-        working_dir: /cwv-perf-optimize
-        command: ["/vendor/bin/phpunit"]
+        working_dir: /app
+        entrypoint: ["/app/vendor/bin/codecept"]
         depends_on:
-            - db
+            - testdb
         environment:
             XDEBUG_MODE: "off"
+
+    testdb:
+        image: mariadb
+        volumes:
+            - testdb_data:/var/lib/mysql
+        environment:
+            MYSQL_DATABASE: db
+            MYSQL_ROOT_PASSWORD: db
 
     plugin-cs:
         build:
@@ -110,3 +118,4 @@ services:
 
 volumes:
     db_data:
+    testdb_data:
