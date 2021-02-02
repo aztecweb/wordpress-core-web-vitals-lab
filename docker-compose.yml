@@ -94,9 +94,13 @@ services:
         image: mariadb
         volumes:
             - testdb_data:/var/lib/mysql
+        depends_on:
+            - server
         environment:
             MYSQL_DATABASE: db
             MYSQL_ROOT_PASSWORD: db
+        ports:
+            - 3306:3306
 
     plugin-cs:
         build:
