@@ -19,6 +19,7 @@ RUN set -ex; \
 
 # Add WP-CLI MySQL client dependency to image
 COPY --from=wordpress:cli /usr/bin/mysql /usr/local/bin/mysql
+COPY --from=wordpress:cli /usr/bin/mysqldump /usr/local/bin/mysqldump
 
 # Install, enable and configure Xdebug
 RUN { \
