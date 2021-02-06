@@ -19,6 +19,7 @@ RUN set -ex; \
 
 # Add WP-CLI MySQL client dependency to image
 COPY --from=wordpress:cli /usr/bin/mysql /usr/local/bin/mysql
+COPY --from=wordpress:cli /usr/bin/mysqldump /usr/local/bin/mysqldump
 
 # Install, enable and configure Xdebug
 RUN { \
@@ -30,7 +31,7 @@ RUN { \
 
 
 # Change PAGER environment variable to WP-CLI work with busybox less
-ENV PATH ${PATH}:/vendor/bin
+ENV PATH ${PATH}:/app/vendor/bin
 
 # Change PAGER environment variable to WP-CLI work with busybox less
 ENV PAGER more
@@ -43,8 +44,11 @@ COPY wp-install.sh /usr/local/bin/wp-install
 
 FROM base as tests
 
-# subversion is required by Wordpress Unit test installer
-RUN apk add --update --no-cache subversion
+RUN set -ex; \
+    # Fix: iconv(): Wrong charset, conversion from `utf-8' to `us-ascii//TRANSLIT' is not allowed
+    # Source: https://github.com/phpearth/docker-php/issues/3
+    apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing gnu-libiconv; \
+    # Install tests PHP dependency
+    docker-php-ext-install pdo_mysql
 
-# mysqladmin is required by Wordpress Unit test installer
-COPY --from=wordpress:cli /usr/bin/mysqladmin /usr/local/bin/mysqladmin
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php

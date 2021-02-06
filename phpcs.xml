@@ -3,8 +3,9 @@
 	<description>Generally-applicable sniffs for WordPress plugins.</description>
 
 	<!-- What to scan -->
-	<file>.</file>
-	<exclude-pattern>/.tmp/</exclude-pattern>
+	<file>cwv-perf-optimize/</file>
+	<file>tests/unit/</file>
+	<file>tests/bootstrap.php</file>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->

@@ -1,6 +1,0 @@
-watch:
-  directories:
-    - .
-  fileMask: '*.php'
-phpunit:
-  binaryPath: /usr/local/bin/phpunit

@@ -76,29 +76,53 @@ services:
         volumes:
             - ./docker/varnish/etc/default.vcl:/etc/varnish/default.vcl:ro
 
-    plugin-tests:
+    phpunit:
         build:
             context: ./docker/wp
             target: tests
         volumes:
-            - ./cwv-perf-optimize:/cwv-perf-optimize
-            - ./vendor:/vendor
-        working_dir: /cwv-perf-optimize
-        command: ["/vendor/bin/phpunit"]
+            - .:/app
+        working_dir: /app
+        command: ["/app/vendor/bin/phpunit"]
         depends_on:
-            - db
+            - testdb
         environment:
             XDEBUG_MODE: "off"
 
-    plugin-cs:
+    codecept:
+        build:
+            context: ./docker/wp
+            target: tests
+        volumes:
+            - .:/app
+            - ./cwv-perf-optimize:/cwv-perf-optimize
+        working_dir: /app
+        entrypoint: ["/app/vendor/bin/codecept"]
+        depends_on:
+            - testdb
+        environment:
+            XDEBUG_MODE: "off"
+
+    testdb:
+        image: mariadb
+        volumes:
+            - testdb_data:/var/lib/mysql
+        depends_on:
+            - server
+        environment:
+            MYSQL_DATABASE: db
+            MYSQL_ROOT_PASSWORD: db
+        ports:
+            - 3306:3306
+
+    cs:
         build:
             context: ./docker/wp
             target: base
         volumes:
-            - ./cwv-perf-optimize:/cwv-perf-optimize
-            - ./vendor:/vendor
-        working_dir: /cwv-perf-optimize
-        command: ["/vendor/bin/phpcs", "-s"]
+            - .:/app
+        working_dir: /app
+        command: ["bash", "-c", "/app/vendor/bin/phpcs -s; /app/vendor/bin/phpcs -s --standard=phpcs.codeption.xml"]
 
     composer:
         image: composer
@@ -110,3 +134,4 @@ services:
 
 volumes:
     db_data:
+    testdb_data:

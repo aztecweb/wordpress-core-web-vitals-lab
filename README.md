@@ -106,17 +106,17 @@ $ docker-compose run --rm plugin-tests
 The unit tests images come with [phpunit-watcher](https://github.com/spatie/phpunit-watcher) shipped to keep PHPUnit running and waiting changes to run the tests again.
 
 ```bash
-$ docker-compose run --rm plugin-tests phpunit-watcher watch
+$ docker-compose run --rm phpunit phpunit-watcher watch
 ```
 
 ### How to check plugin coding standards?
 
 ```bash
-$ docker-compose run --rm plugin-cs
+$ docker-compose run --rm cs
 ```
 
 To fix code alowed to be fixed using [PHP Code Beautifier and Fixer](https://github.com/squizlabs/PHP_CodeSniffer/wiki/Fixing-Errors-Automatically).
 
 ```bash
-$ docker-compose run --rm plugin-cs phpcbf
+$ docker-compose run --rm cs phpcbf
 ```
