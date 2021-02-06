@@ -115,15 +115,14 @@ services:
         ports:
             - 3306:3306
 
-    plugin-cs:
+    cs:
         build:
             context: ./docker/wp
             target: base
         volumes:
-            - ./cwv-perf-optimize:/cwv-perf-optimize
-            - ./vendor:/vendor
-        working_dir: /cwv-perf-optimize
-        command: ["/vendor/bin/phpcs", "-s"]
+            - .:/app
+        working_dir: /app
+        command: ["bash", "-c", "/app/vendor/bin/phpcs -s; /app/vendor/bin/phpcs -s --standard=phpcs.codeption.xml"]
 
     composer:
         image: composer
