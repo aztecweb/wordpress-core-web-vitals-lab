@@ -76,6 +76,19 @@ services:
         volumes:
             - ./docker/varnish/etc/default.vcl:/etc/varnish/default.vcl:ro
 
+    phpunit:
+        build:
+            context: ./docker/wp
+            target: tests
+        volumes:
+            - .:/app
+        working_dir: /app
+        command: ["/app/vendor/bin/phpunit"]
+        depends_on:
+            - testdb
+        environment:
+            XDEBUG_MODE: "off"
+
     codecept:
         build:
             context: ./docker/wp

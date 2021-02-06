@@ -31,7 +31,7 @@ RUN { \
 
 
 # Change PAGER environment variable to WP-CLI work with busybox less
-ENV PATH ${PATH}:/vendor/bin
+ENV PATH ${PATH}:/app/vendor/bin
 
 # Change PAGER environment variable to WP-CLI work with busybox less
 ENV PAGER more
