@@ -99,9 +99,25 @@ services:
         working_dir: /app
         entrypoint: ["/app/vendor/bin/codecept"]
         depends_on:
+            - chrome
             - testdb
         environment:
             XDEBUG_MODE: "off"
+
+    selenium-hub:
+        image: selenium/hub:3.14
+
+    chrome:
+        image: selenium/node-chrome:3.14
+        volumes:
+            - /dev/shm:/dev/shm
+        links:
+            - server
+        depends_on:
+            - selenium-hub
+        environment:
+            - HUB_HOST=selenium-hub
+            - HUB_PORT=4444
 
     testdb:
         image: mariadb
