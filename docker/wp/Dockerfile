@@ -17,7 +17,8 @@ RUN set -ex; \
     # Remove build dependencies
     apk del .build-deps
 
-# Add WP-CLI MySQL client dependency to image
+# Add WP-CLI binary to image and dependencies
+COPY --from=wordpress:cli /usr/local/bin/wp /usr/local/bin/wp
 COPY --from=wordpress:cli /usr/bin/mysql /usr/local/bin/mysql
 COPY --from=wordpress:cli /usr/bin/mysqldump /usr/local/bin/mysqldump
 
