@@ -1,0 +1,15 @@
+version: "2.3"
+
+services:
+    penthouse:
+        build: .
+        depends_on:
+            - static-server
+        volumes:
+        - .:/penthouse-poc
+
+    static-server:
+        build: ../docker/nginx
+        volumes:
+            - .:/var/www/html:ro
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
