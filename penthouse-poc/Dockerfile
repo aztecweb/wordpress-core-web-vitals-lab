@@ -9,6 +9,7 @@ RUN set -ex; \
     \
     rm -rf /var/lib/apt/lists/*
 
+RUN yarn global add nodemon
 RUN yarn add penthouse puppeteer
 
 WORKDIR /penthouse-poc

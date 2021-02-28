@@ -6,7 +6,17 @@ services:
         depends_on:
             - static-server
         volumes:
-        - .:/penthouse-poc
+            - .:/penthouse-poc
+
+    penthouse-service:
+        build: .
+        depends_on:
+            - static-server
+        volumes:
+            - .:/penthouse-poc
+        command: [ 'nodemon', 'server.js' ]
+        ports:
+            - 8080:8080
 
     static-server:
         build: ../docker/nginx
